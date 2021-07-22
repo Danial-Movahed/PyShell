@@ -42,12 +42,20 @@ class color:
     def printRR(self,string):
         print(self.redd+string+self.end,end="")
 ################## class color End ##############
+################## init Start ##############
 color_main=color()
+azxdew=0
+commandsToRun=list()
+################## init End ##############
 ################## While Start ##################
 while True:
-    color_main.printB(getpass.getuser())
-    color_main.printG("@"+str(socket.gethostname())+" $ ")
-    command = input()
+    if len(commandsToRun) > 0 and azxdew<len(commandsToRun):
+        command = commandsToRun[azxdew]
+        azxdew+=1
+    else:
+        color_main.printB(getpass.getuser())
+        color_main.printG("@"+str(socket.gethostname())+" $ ")        
+        command = input()
     try:
         commandName = command.split(' ')[0]
         commandArg = command.split(' ')[1:]
@@ -72,6 +80,19 @@ while True:
         color_main.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n")
     elif commandName == 'read':
         globals()[commandArg[0]]=input()
+    elif commandName == 'if':
+        commandsToRun=list()
+        while True:
+            TEMP=input("> ")
+            if TEMP == "fi":
+                break
+            commandsToRun.append(TEMP)
+        if commandArg[2]=="==":
+            if commandArg[1]==commandArg[3]:
+                azxdew=0
+                continue
+            else:
+                commandsToRun=list()
     elif command:
         cmd=list()
         cmd.append(commandName)
@@ -80,8 +101,8 @@ while True:
             rc = subprocess.call(cmd, stdout=sys.stdout, stderr=subprocess.STDOUT)
             print('Command returned '+str(rc))
         except:
-             color_main.printR('An error occured while running that command!')
+             color_main.printRR('An error occured while running that command!')
              print('')
-             color_main.printY('Double check your command for any typo')
+             color_main.printR('Double check your command for any typo')
              print('')
 ################## While End ##################
