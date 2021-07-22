@@ -46,6 +46,7 @@ class color:
 color_main=color()
 azxdew=0
 commandsToRun=list()
+historyFile = open('.history','a+')
 ################## init End ##############
 ################## While Start ##################
 while True:
@@ -56,6 +57,9 @@ while True:
         color_main.printB(getpass.getuser())
         color_main.printG("@"+str(socket.gethostname())+" $ ")
         command = input()
+        historyFile.write(command)
+        historyFile.write('\n')
+        historyFile.flush()
     try:
         commandName = command.split(' ')[0]
         commandArg = command.split(' ')[1:]
@@ -116,3 +120,4 @@ while True:
              color_main.printR('Double check your command for any typo')
              print('')
 ################## While End ##################
+historyFile.close()
