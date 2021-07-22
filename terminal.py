@@ -39,15 +39,20 @@ while True:
     if commandName == 'exit':
         break
     elif commandName == 'echo':
-        for i in range(len(commandArg)):
-            print(commandArg[i],end=' ')
-        print('')
+        if commandArg[0][0]=='$':
+            print(globals()[commandArg[0][1:]])
+        else:
+            for i in range(len(commandArg)):
+                print(commandArg[i],end=' ')
+            print('')
     elif commandName == 'clear':
         cls()
     elif commandName == 'help':
         color_main.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n")
+    elif commandName == 'read':
+        globals()[commandArg[0]]=input()
     elif command:
-        cmd=[]
+        cmd=list()
         cmd.append(commandName)
         cmd+=commandArg
         try:
