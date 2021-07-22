@@ -40,7 +40,10 @@ while True:
         break
     elif commandName == 'echo':
         if commandArg[0][0]=='$':
-            print(globals()[commandArg[0][1:]])
+            try:
+                print(globals()[commandArg[0][1:]])
+            except:
+                print("")
         else:
             for i in range(len(commandArg)):
                 print(commandArg[i],end=' ')
