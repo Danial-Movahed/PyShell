@@ -12,6 +12,13 @@ class color:
         self.green='\033[92m'
         self.yellow='\033[93m'
         self.red='\033[91m'
+        ##################### ----- #####################
+        self.redd='\033[31m'
+        self.cyann='\033[36m'
+        self.bluee='\033[34m'
+        self.greenn='\033[32m'
+        self.yelloww='\033[33m'
+
         self.end='\033[0m'
     def printC(self,string):
         print(self.cyan+string+self.end,end="")
@@ -23,6 +30,17 @@ class color:
         print(self.yellow+string+self.end,end="")
     def printR(self,string):
         print(self.red+string+self.end,end="")
+    ##################### ----- #####################
+    def printCC(self,string):
+        print(self.cyann+string+self.end,end="")
+    def printBB(self,string):
+        print(self.bluee+string+self.end,end="")
+    def printGG(self,string):
+        print(self.greenn+string+self.end,end="")
+    def printYY(self,string):
+        print(self.yelloww+string+self.end,end="")
+    def printRR(self,string):
+        print(self.redd+string+self.end,end="")
 ################## class color End ##############
 color_main=color()
 ################## While Start ##################
