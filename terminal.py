@@ -57,9 +57,10 @@ while True:
         color_main.printB(getpass.getuser())
         color_main.printG("@"+str(socket.gethostname())+" $ ")
         command = input()
-        historyFile.write(command)
-        historyFile.write('\n')
-        historyFile.flush()
+        if len(command)>0:
+            historyFile.write(command)
+            historyFile.write('\n')
+            historyFile.flush()
     try:
         commandName = command.split(' ')[0]
         commandArg = command.split(' ')[1:]
