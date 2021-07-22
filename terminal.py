@@ -54,7 +54,7 @@ while True:
         azxdew+=1
     else:
         color_main.printB(getpass.getuser())
-        color_main.printG("@"+str(socket.gethostname())+" $ ")        
+        color_main.printG("@"+str(socket.gethostname())+" $ ")
         command = input()
     try:
         commandName = command.split(' ')[0]
@@ -87,8 +87,18 @@ while True:
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
-        if commandArg[2]=="==":
-            if commandArg[1]==commandArg[3]:
+        if commandArg[0][0]=="$":
+            try:
+                commandArg[0]=globals()[commandArg[0][1:]]
+            except:
+                commandArg[0]=""
+        if commandArg[2][0]=="$":
+            try:
+                commandArg[2]=globals()[commandArg[2][1:]]
+            except:
+                commandArg[2]=""
+        if commandArg[1]=="==":
+            if commandArg[0]==commandArg[2]:
                 azxdew=0
                 continue
             else:
