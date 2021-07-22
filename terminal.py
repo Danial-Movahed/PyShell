@@ -46,11 +46,11 @@ class Shell(cmd.Cmd):
             print(globals()[args.split(' ')[0]])
         else:
             print(args)
-    def do_exit(self):
+    def do_exit(self,args):
         return True
-    def do_clear(self):
+    def do_clear(self,args):
         cls()
-    def do_read(self,arg):
+    def do_read(self,args):
         arg=arg.split(' ')[0]
         globals()[arg]=input()
 
