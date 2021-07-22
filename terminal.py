@@ -3,9 +3,8 @@ import socket
 import os
 import sys
 import subprocess
-#cls = lambda: print('\n' * 100)
-os.system('cls')
-################## class color Start ##################
+cls = lambda: print('\n' * 100)
+################## class color Start ##############
 class color:
     def __init__(self):
         self.cyan='\033[96m'
@@ -24,35 +23,33 @@ class color:
         print(self.yellow+string+self.end,end="")
     def printR(self,string):
         print(self.red+string+self.end,end="")
-################## class color End ##################
+################## class color End ##############
 color_main=color()
-commands_main=['echo','exit','clear','help']
 ################## While Start ##################
 while True:
-    #color_main.printB(getpass.getuser())
-    color_main.printB("Hex")
+    color_main.printB(getpass.getuser())
     color_main.printG("@"+str(socket.gethostname())+" $ ")
     command = input()
     try:
         commandName = command.split(' ')[0]
-        commandArg = command.split(' ')[1]
+        commandArg = command.split(' ')[1:]
     except:
-        try:
-            commandName = command.split(' ')[0]
-        except:
-            commandName = command
-            commandArg = ''
-    if command == 'exit':
+        commandName = command
+        commandArg = ''
+    if commandName == 'exit':
         break
     elif commandName == 'echo':
-        print(commandArg)
-    elif command == 'clear':
-        os.system('cls')
-    elif command == 'help':
+        for i in range(len(commandArg)):
+            print(commandArg[i],end=' ')
+        print('')
+    elif commandName == 'clear':
+        cls()
+    elif commandName == 'help':
         color_main.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n")
-    #elif commandName not in commands_main:
-    #    color_main.printR(commandName+": command not found\n")
-    else:
-        
-    subprocess.Popen([commandName,commandArg])
+    elif command:
+        cmd=[]
+        cmd.append(commandName)
+        cmd+=commandArg
+        rc = subprocess.call(cmd, stdout=sys.stdout, stderr=subprocess.STDOUT)
+        print('Command returned '+str(rc))
 ################## While End ##################
