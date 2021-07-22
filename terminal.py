@@ -50,6 +50,12 @@ while True:
         cmd=[]
         cmd.append(commandName)
         cmd+=commandArg
-        rc = subprocess.call(cmd, stdout=sys.stdout, stderr=subprocess.STDOUT)
-        print('Command returned '+str(rc))
+        try:
+            rc = subprocess.call(cmd, stdout=sys.stdout, stderr=subprocess.STDOUT)
+            print('Command returned '+str(rc))
+        except:
+             color_main.printR('An error occured while running that command!')
+             print('')
+             color_main.printY('Double check your command for any typo')
+             print('')
 ################## While End ##################
