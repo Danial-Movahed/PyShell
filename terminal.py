@@ -54,10 +54,9 @@ allCommands = [
 'else',
 ]
 main_color = color()
-try:
-    historyFile = open('.history','r+')
-except:
-    historyFile = open('.history','w+')
+
+historyFile = open('.history','a+')
+
 if os.name == "nt":
     os.system('cls')
 else:
@@ -92,11 +91,13 @@ class Shell(cmd.Cmd):
         args=args.split(' ')[0]
         globals()[args]=input()
     def do_history(self,args):
-        historyFile.write("read "+str(args))
+        historyFile.write("history "+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        for TEMP in historyFile:
-            print(TEMP)
+        historyFile.seek(0)
+        for num, TEMP in enumerate(historyFile, start=1):
+            print('{}  {}'.format(num, TEMP.strip()))
+        print(historyFile.read())
     def do_help(self,args):
         historyFile.write('help')
         historyFile.write('\n')
@@ -110,10 +111,6 @@ class Shell(cmd.Cmd):
         commandsToRun=list()
         while True:
             TEMP=input("> ")
-            #if TEMP == 'else':
-            #    TEMP_A='else'
-            #    TEMP=input("> ")
-
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
