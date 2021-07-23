@@ -50,23 +50,45 @@ allCommands = [
 ]
 main_color = color()
 cls = lambda: print('\n' * 100)
+try:
+    historyFile = open('.history','a+')
+except:
+    historyFile = open('.history','w+')
 class Shell(cmd.Cmd):
     prompt=main_color.printBB(getpass.getuser())+main_color.printGG("@"+socket.gethostname()+" $ ")
     def do_echo(self, args):
+        historyFile.write('echo '+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
         if args[0] == '$':
             print(globals()[args[1:]])
         else:
             print(''.join(args))
     def do_exit(self,args):
+        historyFile.write('exit')
+        historyFile.write('\n')
+        historyFile.flush()
         return True
     def do_clear(self,args):
+        historyFile.write("clear")
+        historyFile.write('\n')
+        historyFile.flush()
         cls()
     def do_read(self,args):
+        historyFile.write("read "+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
         args=args.split(' ')[0]
         globals()[args]=input()
     def do_help(self,args):
+        historyFile.write('help')
+        historyFile.write('\n')
+        historyFile.flush()
         print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
     def do_if(self,args):
+        historyFile.write('if '+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
         args=args.split(' ')
         commandsToRun=list()
         while True:
@@ -92,6 +114,9 @@ class Shell(cmd.Cmd):
                     else:
                         eval("self.default('"+str(commandsToRun[TEMP])+"')")
     def default(self,args):
+        historyFile.write(args)
+        historyFile.write('\n')
+        historyFile.flush()
         args=args.split(' ')
         try:
             rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
@@ -102,3 +127,4 @@ class Shell(cmd.Cmd):
 
 
 Shell().cmdloop()
+historyFile.close()
