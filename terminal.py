@@ -3,7 +3,7 @@ import socket
 import getpass
 import subprocess
 import sys
-
+################## class color Start ##############
 class color:
     def __init__(self):
         self.cyan='\033[96m'
@@ -11,7 +11,7 @@ class color:
         self.green='\033[92m'
         self.yellow='\033[93m'
         self.red='\033[91m'
-        ##################### ----- #####################
+    ##################### ----- #####################
         self.redd='\033[31m'
         self.cyann='\033[36m'
         self.bluee='\033[34m'
@@ -39,7 +39,8 @@ class color:
         return(self.yelloww+string+self.end)
     def printRR(self,string):
         return(self.redd+string+self.end)
-
+################## class color End ##############
+################## init Start ##############
 allCommands = [
 'read',
 'echo',
@@ -50,6 +51,8 @@ allCommands = [
 ]
 main_color = color()
 cls = lambda: print('\n' * 100)
+################## init End ##############
+################## Main Loop Start ##############
 class Shell(cmd.Cmd):
     prompt=main_color.printBB(getpass.getuser())+main_color.printGG("@"+socket.gethostname()+" $ ")
     def do_echo(self, args):
@@ -100,5 +103,7 @@ class Shell(cmd.Cmd):
              print(main_color.printRR('An error occured while running that command!'))
              print(main_color.printR('Double check your command for any typo'))
 
-
+################## Main Loop End ##############
+################## Finial ##############
 Shell().cmdloop()
+################## Finial ##############
