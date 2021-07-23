@@ -1,6 +1,8 @@
 import cmd
 import socket
 import getpass
+import subprocess
+import sys
 
 class color:
     def __init__(self):
@@ -37,23 +39,66 @@ class color:
         return(self.yelloww+string+self.end)
     def printRR(self,string):
         return(self.redd+string+self.end)
+
+allCommands = [
+'read',
+'echo',
+'if',
+'help',
+'exit',
+'clear',
+]
 main_color = color()
 cls = lambda: print('\n' * 100)
 class Shell(cmd.Cmd):
     prompt=main_color.printBB(getpass.getuser())+main_color.printGG("@"+socket.gethostname()+" $ ")
     def do_echo(self, args):
         if args[0] == '$':
-            print(globals()[args.split(' ')[0]])
+            print(globals()[args[1:]])
         else:
-            print(args)
+            print(''.join(args))
     def do_exit(self,args):
         return True
     def do_clear(self,args):
         cls()
     def do_read(self,args):
-        arg=arg.split(' ')[0]
-        globals()[arg]=input()
-
+        args=args.split(' ')[0]
+        globals()[args]=input()
+    def do_help(self,args):
+        print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
+    def do_if(self,args):
+        args=args.split(' ')
+        commandsToRun=list()
+        while True:
+            TEMP=input("> ")
+            if TEMP == "fi":
+                break
+            commandsToRun.append(TEMP)
+        if args[0][0]=="$":
+            try:
+                args[0]=globals()[args[0][1:]]
+            except:
+                args[0]=""
+        if args[2][0]=="$":
+            try:
+                args[2]=globals()[args[2][1:]]
+            except:
+                args[2]=""
+        if args[1] == '==':
+            if args[0] == args[2]:
+                for TEMP in range(len(commandsToRun)):
+                    if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                    else:
+                        eval("self.default('"+str(commandsToRun[TEMP])+"')")
+    def default(self,args):
+        args=args.split(' ')
+        try:
+            rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+            print('Command returned '+str(rc))
+        except:
+             print(main_color.printRR('An error occured while running that command!'))
+             print(main_color.printR('Double check your command for any typo'))
 
 
 Shell().cmdloop()
