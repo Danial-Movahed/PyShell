@@ -64,7 +64,7 @@ class Shell(cmd.Cmd):
         if args[0] == '$':
             print(globals()[args[1:]])
         else:
-            print(''.join(args))
+            print(args)
     def do_exit(self,args):
         return True
     def do_read(self,args):
@@ -99,21 +99,21 @@ class Shell(cmd.Cmd):
                 try:
                     for TEMP in commandsToRun[:commandsToRun.index('else')]:
                         if str(TEMP.split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(TEMP.split(' ')[0])+"("+str(TEMP.split(' ')[1:])+")")
+                            eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
-                            eval("self.default('"+str(TEMP)+"')")
+                            eval("self.default('"+' '.join(TEMP)+"')")
                 except:
                     for TEMP in range(len(commandsToRun)):
                         if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+str(commandsToRun[TEMP])+"')")
             elif 'else' in commandsToRun:
                 for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                     if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"("+str(TEMP.split(' ')[1:])+")")
+                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                     else:
-                        eval("self.default('"+str(TEMP)+"')")
+                        eval("self.default('"+' '.join(TEMP)+"')")
     def default(self,args):
         args=args.split(' ')
         if os.name == "nt" and args[0]=='clear':
