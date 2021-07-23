@@ -3,6 +3,7 @@ import socket
 import getpass
 import subprocess
 import sys
+import linecache
 
 class color:
     def __init__(self):
@@ -51,7 +52,7 @@ allCommands = [
 main_color = color()
 cls = lambda: print('\n' * 100)
 try:
-    historyFile = open('.history','a+')
+    historyFile = open('.history','r+')
 except:
     historyFile = open('.history','w+')
 class Shell(cmd.Cmd):
@@ -80,6 +81,12 @@ class Shell(cmd.Cmd):
         historyFile.flush()
         args=args.split(' ')[0]
         globals()[args]=input()
+    def do_history(self,args):
+        historyFile.write("read "+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
+        for TEMP in historyFile:
+            print(TEMP)
     def do_help(self,args):
         historyFile.write('help')
         historyFile.write('\n')
