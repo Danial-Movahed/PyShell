@@ -89,6 +89,8 @@ class Shell(cmd.Cmd):
         historyFile.write('\n')
         historyFile.flush()
         historyFile.seek(0)
+        for num, TEMP in enumerate(historyFile, start=1):
+            print('{}  {}'.format(num, TEMP.strip()))
         print(historyFile.read())
     def do_help(self,args):
         historyFile.write('help')
