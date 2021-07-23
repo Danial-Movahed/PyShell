@@ -66,6 +66,11 @@ else:
 ################## Main Loop Start ##############
 class Shell(cmd.Cmd):
     prompt=main_color.printBB(getpass.getuser())+main_color.printGG("@"+socket.gethostname()+" $ ")
+    def do_cd(self,args):
+        try:
+            os.chdir(args)
+        except:
+            print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
     def do_echo(self, args):
         historyFile.write('echo '+str(args))
         historyFile.write('\n')
