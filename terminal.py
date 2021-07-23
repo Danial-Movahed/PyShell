@@ -2,7 +2,7 @@ import cmd
 import socket
 import getpass
 import subprocess
-from sys import *
+import sys
 import os
 ################## class color Start ##############
 class color:
@@ -51,15 +51,11 @@ allCommands = [
 'clear',
 'else',
 ]
-TEMP_A=''
 main_color = color()
-if platform == "linux" or platform == "linux2": #detecting linux system
-    def cls():
-        os.system('clear')
-else: #detecting windows or ... system
-    def cls():
-        os.system('cls')
-cls()
+if os.name == "nt":
+    os.system('cls')
+else:
+    os.system('clear')
 ################## init End ##############
 ################## Main Loop Start ##############
 class Shell(cmd.Cmd):
@@ -71,8 +67,6 @@ class Shell(cmd.Cmd):
             print(''.join(args))
     def do_exit(self,args):
         return True
-    def do_clear(self,args):
-        cls()
     def do_read(self,args):
         args=args.split(' ')[0]
         globals()[args]=input()
@@ -83,9 +77,9 @@ class Shell(cmd.Cmd):
         commandsToRun=list()
         while True:
             TEMP=input("> ")
-            if TEMP == 'else':
-                TEMP_A='else'
-                TEMP=input("> ")
+            #if TEMP == 'else':
+            #    TEMP_A='else'
+            #    TEMP=input("> ")
 
             if TEMP == "fi":
                 break
@@ -102,26 +96,35 @@ class Shell(cmd.Cmd):
                 args[2]=""
         if args[1] == '==':
             if args[0] == args[2]:
-                for TEMP in range(len(commandsToRun)):
-                    if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                try:
+                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                        if str(TEMP.split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(TEMP.split(' ')[0])+"("+str(TEMP.split(' ')[1:])+")")
+                        else:
+                            eval("self.default('"+str(TEMP)+"')")
+                except:
+                    for TEMP in range(len(commandsToRun)):
+                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                        else:
+                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
+            elif 'else' in commandsToRun:
+                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
+                    if str(TEMP.split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(TEMP.split(' ')[0])+"("+str(TEMP.split(' ')[1:])+")")
                     else:
-                        eval("self.default('"+str(commandsToRun[TEMP])+"')")
-        if TEMP_A == 'else':
-            if args[0] != args[2]:
-                for TEMP in range(len(commandsToRun)):
-                    if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
-                    else:
-                        eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                        eval("self.default('"+str(TEMP)+"')")
     def default(self,args):
         args=args.split(' ')
-        try:
-            rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
-            print('Command returned '+str(rc))
-        except:
-             print(main_color.printRR('An error occured while running that command!'))
-             print(main_color.printR('Double check your command for any typo'))
+        if os.name == "nt" and args[0]=='clear':
+            os.system('cls')
+        else:
+            try:
+                rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                print('Command returned '+str(rc))
+            except:
+                 print(main_color.printRR('An error occured while running that command!'))
+                 print(main_color.printR('Double check your command for any typo'))
 
 ################## Main Loop End ##############
 ################## Finial ##############
