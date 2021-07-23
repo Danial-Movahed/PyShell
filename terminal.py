@@ -4,7 +4,9 @@ import getpass
 import subprocess
 import sys
 import linecache
+import os
 
+################## class color Start ##############
 class color:
     def __init__(self):
         self.cyan='\033[96m'
@@ -12,7 +14,7 @@ class color:
         self.green='\033[92m'
         self.yellow='\033[93m'
         self.red='\033[91m'
-        ##################### ----- #####################
+    ##################### ----- #####################
         self.redd='\033[31m'
         self.cyann='\033[36m'
         self.bluee='\033[34m'
@@ -40,7 +42,8 @@ class color:
         return(self.yelloww+string+self.end)
     def printRR(self,string):
         return(self.redd+string+self.end)
-
+################## class color End ##############
+################## init Start ##############
 allCommands = [
 'read',
 'echo',
@@ -48,13 +51,19 @@ allCommands = [
 'help',
 'exit',
 'clear',
+'else',
 ]
 main_color = color()
-cls = lambda: print('\n' * 100)
 try:
     historyFile = open('.history','r+')
 except:
     historyFile = open('.history','w+')
+if os.name == "nt":
+    os.system('cls')
+else:
+    os.system('clear')
+################## init End ##############
+################## Main Loop Start ##############
 class Shell(cmd.Cmd):
     prompt=main_color.printBB(getpass.getuser())+main_color.printGG("@"+socket.gethostname()+" $ ")
     def do_echo(self, args):
@@ -64,17 +73,12 @@ class Shell(cmd.Cmd):
         if args[0] == '$':
             print(globals()[args[1:]])
         else:
-            print(''.join(args))
+            print(args)
     def do_exit(self,args):
         historyFile.write('exit')
         historyFile.write('\n')
         historyFile.flush()
         return True
-    def do_clear(self,args):
-        historyFile.write("clear")
-        historyFile.write('\n')
-        historyFile.flush()
-        cls()
     def do_read(self,args):
         historyFile.write("read "+str(args))
         historyFile.write('\n')
@@ -100,6 +104,10 @@ class Shell(cmd.Cmd):
         commandsToRun=list()
         while True:
             TEMP=input("> ")
+            #if TEMP == 'else':
+            #    TEMP_A='else'
+            #    TEMP=input("> ")
+
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
@@ -115,23 +123,41 @@ class Shell(cmd.Cmd):
                 args[2]=""
         if args[1] == '==':
             if args[0] == args[2]:
-                for TEMP in range(len(commandsToRun)):
-                    if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                try:
+                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                        if str(TEMP.split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                        else:
+                            eval("self.default('"+' '.join(TEMP)+"')")
+                except:
+                    for TEMP in range(len(commandsToRun)):
+                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                        else:
+                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
+            elif 'else' in commandsToRun:
+                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
+                    if str(TEMP.split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                     else:
-                        eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                        eval("self.default('"+' '.join(TEMP)+"')")
     def default(self,args):
         historyFile.write(args)
         historyFile.write('\n')
         historyFile.flush()
         args=args.split(' ')
-        try:
-            rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
-            print('Command returned '+str(rc))
-        except:
-             print(main_color.printRR('An error occured while running that command!'))
-             print(main_color.printR('Double check your command for any typo'))
+        if os.name == "nt" and args[0]=='clear':
+            os.system('cls')
+        else:
+            try:
+                rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                print('Command returned '+str(rc))
+            except:
+                 print(main_color.printRR('An error occured while running that command!'))
+                 print(main_color.printR('Double check your command for any typo'))
 
-
+################## Main Loop End ##############
+################## Final ##############
 Shell().cmdloop()
 historyFile.close()
+################## Final ##############
