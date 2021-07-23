@@ -2,7 +2,8 @@ import cmd
 import socket
 import getpass
 import subprocess
-import sys
+from sys import *
+import os
 ################## class color Start ##############
 class color:
     def __init__(self):
@@ -48,9 +49,17 @@ allCommands = [
 'help',
 'exit',
 'clear',
+'else',
 ]
+TEMP_A=''
 main_color = color()
-cls = lambda: print('\n' * 100)
+if platform == "linux" or platform == "linux2": #detecting linux system
+    def cls():
+        os.system('clear')
+else: #detecting windows or ... system
+    def cls():
+        os.system('cls')
+cls()
 ################## init End ##############
 ################## Main Loop Start ##############
 class Shell(cmd.Cmd):
@@ -74,6 +83,10 @@ class Shell(cmd.Cmd):
         commandsToRun=list()
         while True:
             TEMP=input("> ")
+            if TEMP == 'else':
+                TEMP_A='else'
+                TEMP=input("> ")
+
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
@@ -89,6 +102,13 @@ class Shell(cmd.Cmd):
                 args[2]=""
         if args[1] == '==':
             if args[0] == args[2]:
+                for TEMP in range(len(commandsToRun)):
+                    if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
+                    else:
+                        eval("self.default('"+str(commandsToRun[TEMP])+"')")
+        if TEMP_A == 'else':
+            if args[0] != args[2]:
                 for TEMP in range(len(commandsToRun)):
                     if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
                         eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"("+str(commandsToRun[TEMP].split(' ')[1:])+")")
