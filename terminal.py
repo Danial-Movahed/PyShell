@@ -52,7 +52,8 @@ allCommands = [
 'exit',
 'clear',
 'else',
-'history'
+'history',
+'cd'
 ]
 main_color = color()
 
@@ -67,11 +68,31 @@ else:
 class Shell(cmd.Cmd):
     prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
     def do_cd(self,args):
-        try:
-            os.chdir(args)
-            self.prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
-        except:
-            print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
+        historyFile.write('cd '+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
+        RealCommands=list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=['cd '+args[0].strip()]
+            args.remove(args[0])
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            try:
+                os.chdir(args)
+                self.prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
+            except:
+                print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
     def do_echo(self, args):
         historyFile.write('echo '+str(args))
         historyFile.write('\n')
