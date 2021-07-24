@@ -255,21 +255,39 @@ class Shell(cmd.Cmd):
         historyFile.write(args)
         historyFile.write('\n')
         historyFile.flush()
-        args=args.split(' ')
-        if os.name == "nt" and args[0]=='clear':
-            os.system('cls')
+        RealCommands = list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=list(map(str.strip, args))
+        if len(RealCommands)>0:
+            args = ''
+            for args in RealCommands:
+                args=args.split(' ')
+                if os.name == "nt" and args[0]=='clear':
+                    os.system('cls')
+                else:
+                    try:
+                        rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                        print('Command returned '+str(rc))
+                    except:
+                         print(main_color.printRR('An error occured while running that command!'))
+                         print(main_color.printR('Double check your command for any typo'))
         else:
-            try:
-                rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
-                print('Command returned '+str(rc))
-            except:
-                 print(main_color.printRR('An error occured while running that command!'))
-                 print(main_color.printR('Double check your command for any typo'))
+            args=args.split(' ')
+            if os.name == "nt" and args[0]=='clear':
+                os.system('cls')
+            else:
+                try:
+                    rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                    print('Command returned '+str(rc))
+                except:
+                     print(main_color.printRR('An error occured while running that command!'))
+                     print(main_color.printR('Double check your command for any typo'))
 
 ################## Main Loop End ##############
 ################## Final ##############
-try:
-    Shell().cmdloop()
-except Exception:
-    historyFile.close()
+#try:
+Shell().cmdloop()
+#except Exception:
+historyFile.close()
 ################## Final ##############
