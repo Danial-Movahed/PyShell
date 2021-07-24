@@ -3,7 +3,6 @@ import socket
 import getpass
 import subprocess
 import sys
-import linecache
 import os
 
 ################## class color Start ##############
@@ -124,8 +123,17 @@ class Shell(cmd.Cmd):
                 args[2]=globals()[args[2][1:]]
             except:
                 args[2]=""
-        if args[1] == '==':
-            if args[0] == args[2]:
+
+
+        if 'and' in args:
+            args=' '.join(args)
+            args=args.split('and')
+            for TEMP in range(len(args)):
+                if not eval(args[TEMP]):
+                    cond=False
+                    break
+                cond=True
+            if cond:
                 try:
                     for TEMP in commandsToRun[:commandsToRun.index('else')]:
                         if str(TEMP.split(' ')[0]) in allCommands:
@@ -138,118 +146,138 @@ class Shell(cmd.Cmd):
                             eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
+            else:
                 for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                     if str(TEMP.split(' ')[0]) in allCommands:
                         eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                     else:
                         eval("self.default('"+' '.join(TEMP)+"')")
-
-        if args[1] == '>':
-            if args[0] > args[2]:
-                try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+        else:
+            if args[1] == '==':
+                if args[0] == args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+' '.join(TEMP)+"')")
-                except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
 
-        if args[1] == '<':
-            if args[0] < args[2]:
-                try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+            if args[1] == '>':
+                if args[0] > args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+' '.join(TEMP)+"')")
-                except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
 
-        if args[1] == '>=':
-            if args[0] >= args[2]:
-                try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+            if args[1] == '<':
+                if args[0] < args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+' '.join(TEMP)+"')")
-                except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
 
-        if args[1] == '<=':
-            if args[0] <= args[2]:
-                try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+            if args[1] == '>=':
+                if args[0] >= args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+' '.join(TEMP)+"')")
-                except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
 
-
-        if args[1] == '!=':
-            if args[0] != args[2]:
-                try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+            if args[1] == '<=':
+                if args[0] <= args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
                             eval("self.default('"+' '.join(TEMP)+"')")
-                except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+
+            if args[1] == '!=':
+                if args[0] != args[2]:
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                elif 'else' in commandsToRun:
+                    for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
+                        if str(TEMP.split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
+                            eval("self.default('"+' '.join(TEMP)+"')")
 
     def default(self,args):
         historyFile.write(args)
