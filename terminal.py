@@ -51,6 +51,8 @@ allCommands = [
 'exit',
 'clear',
 'else',
+'history',
+'cd'
 ]
 main_color = color()
 
@@ -65,19 +67,56 @@ else:
 class Shell(cmd.Cmd):
     prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
     def do_cd(self,args):
-        try:
-            os.chdir(args)
-            self.prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
-        except:
-            print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
+        historyFile.write('cd '+str(args))
+        historyFile.write('\n')
+        historyFile.flush()
+        RealCommands=list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=['cd '+args[0].strip()]
+            args.remove(args[0])
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            try:
+                os.chdir(args)
+                self.prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
+            except:
+                print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
     def do_echo(self, args):
         historyFile.write('echo '+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        if args[0] == '$':
-            print(globals()[args[1:]])
+        RealCommands=list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=['echo '+args[0].strip()]
+            args.remove(args[0])
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
         else:
-            print(args)
+            if args[0] == '$':
+                print(globals()[args[1:]])
+            else:
+                print(args)
     def do_exit(self,args):
         historyFile.write('exit')
         historyFile.write('\n')
@@ -87,21 +126,67 @@ class Shell(cmd.Cmd):
         historyFile.write("read "+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        args=args.split(' ')[0]
-        globals()[args]=input()
+        RealCommands=list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=['read '+args[0].strip()]
+            args.remove(args[0])
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            args=args.split(' ')[0]
+            globals()[args]=input()
     def do_history(self,args):
         historyFile.write("history "+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        historyFile.seek(0)
-        for num, TEMP in enumerate(historyFile, start=1):
-            print('{}  {}'.format(num, TEMP.strip()))
-        print(historyFile.read())
+        RealCommands = ['history']
+        if ';' in args:
+            args=args.split(';')
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            historyFile.seek(0)
+            for num, TEMP in enumerate(historyFile, start=1):
+                print('{}  {}'.format(num, TEMP.strip()))
     def do_help(self,args):
         historyFile.write('help')
         historyFile.write('\n')
         historyFile.flush()
-        print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
+        RealCommands = ['help']
+        if ';' in args:
+            args=args.split(';')
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
     def do_if(self,args):
         historyFile.write('if '+str(args))
         historyFile.write('\n')
@@ -277,22 +362,53 @@ class Shell(cmd.Cmd):
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
+<<<<<<< HEAD
                             eval("self.default('"+' '.join(TEMP)+"')")
 
+=======
+                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
+            elif 'else' in commandsToRun:
+                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
+                    if str(TEMP.split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                    else:
+                        eval("self.default('"+' '.join(TEMP)+"')")
+>>>>>>> semicolon
     def default(self,args):
         historyFile.write(args)
         historyFile.write('\n')
         historyFile.flush()
-        args=args.split(' ')
-        if os.name == "nt" and args[0]=='clear':
-            os.system('cls')
+        RealCommands = list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=list(map(str.strip, args))
+        if len(RealCommands)>0:
+            args = ''
+            for args in RealCommands:
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    if os.name == "nt" and args[0]=='clear':
+                        os.system('cls')
+                    else:
+                        try:
+                            rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                            print('Command returned '+str(rc))
+                        except:
+                             print(main_color.printRR('An error occured while running that command!'))
+                             print(main_color.printR('Double check your command for any typo'))
         else:
-            try:
-                rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
-                print('Command returned '+str(rc))
-            except:
-                 print(main_color.printRR('An error occured while running that command!'))
-                 print(main_color.printR('Double check your command for any typo'))
+            args=args.split(' ')
+            if os.name == "nt" and args[0]=='clear':
+                os.system('cls')
+            else:
+                try:
+                    rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                    print('Command returned '+str(rc))
+                except:
+                    print(main_color.printRR('An error occured while running that command!'))
+                    print(main_color.printR('Double check your command for any typo'))
 
 ################## Main Loop End ##############
 ################## Final ##############
