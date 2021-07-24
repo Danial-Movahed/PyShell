@@ -78,7 +78,7 @@ class Shell(cmd.Cmd):
         historyFile.write('exit')
         historyFile.write('\n')
         historyFile.flush()
-        return True
+        raise Exception('Exit')
     def do_read(self,args):
         historyFile.write("read "+str(args))
         historyFile.write('\n')
@@ -158,6 +158,8 @@ class Shell(cmd.Cmd):
 
 ################## Main Loop End ##############
 ################## Final ##############
-Shell().cmdloop()
-historyFile.close()
+try:
+    Shell().cmdloop()
+except Exception:
+    historyFile.close()
 ################## Final ##############
