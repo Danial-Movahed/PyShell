@@ -198,16 +198,9 @@ class Shell(cmd.Cmd):
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
-        if args[0][0]=="$":
-            try:
-                args[0]=globals()[args[0][1:]]
-            except:
-                args[0]=""
-        if args[2][0]=="$":
-            try:
-                args[2]=globals()[args[2][1:]]
-            except:
-                args[2]=""
+        TEMP=[s for s in args if "$" in s]
+        for s in TEMP:
+            args[args.index(s)]=globals()[s[1:]]
 
 
         if 'and' in args:
