@@ -76,10 +76,27 @@ class Shell(cmd.Cmd):
         historyFile.write('echo '+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        if args[0] == '$':
-            print(globals()[args[1:]])
+        RealCommands=list()
+        if ';' in args:
+            args=args.split(';')
+            RealCommands=['echo '+args[0].strip()]
+            args.remove(args[0])
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
         else:
-            print(args)
+            if args[0] == '$':
+                print(globals()[args[1:]])
+            else:
+                print(args)
     def do_exit(self,args):
         historyFile.write('exit')
         historyFile.write('\n')
