@@ -3,7 +3,6 @@ import socket
 import getpass
 import subprocess
 import sys
-import linecache
 import os
 
 ################## class color Start ##############
@@ -104,10 +103,6 @@ class Shell(cmd.Cmd):
         commandsToRun=list()
         while True:
             TEMP=input("> ")
-            #if TEMP == 'else':
-            #    TEMP_A='else'
-            #    TEMP=input("> ")
-
             if TEMP == "fi":
                 break
             commandsToRun.append(TEMP)
@@ -124,17 +119,42 @@ class Shell(cmd.Cmd):
         if args[1] == '==':
             if args[0] == args[2]:
                 try:
-                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
-                        if str(TEMP.split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+' '.join(TEMP)+"')")
+                    args=args.split('and')
+                    for i in range(1,len(args)):
+                        argsT=args[i].split(' ')
+                        if argsT[1] == '==':
+                            if argsT[0] == argsT[2]:
+                                argCo=0
+                            else:
+                                argCo=1
+                                break
+                    if argCo==0:
+                        try:
+                            for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                                if str(TEMP.split(' ')[0]) in allCommands:
+                                    eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                                else:
+                                    eval("self.default('"+' '.join(TEMP)+"')")
+                        except:
+                            for TEMP in range(len(commandsToRun)):
+                                if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                    eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                                else:
+                                    eval("self.default('"+str(commandsToRun[TEMP])+"')")
+
                 except:
-                    for TEMP in range(len(commandsToRun)):
-                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
-                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
-                        else:
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
+                    try:
+                        for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                            if str(TEMP.split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+' '.join(TEMP)+"')")
+                    except:
+                        for TEMP in range(len(commandsToRun)):
+                            if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                                eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                            else:
+                                eval("self.default('"+str(commandsToRun[TEMP])+"')")
             elif 'else' in commandsToRun:
                 for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
                     if str(TEMP.split(' ')[0]) in allCommands:
@@ -225,7 +245,6 @@ class Shell(cmd.Cmd):
                         eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                     else:
                         eval("self.default('"+' '.join(TEMP)+"')")
-
 
         if args[1] == '!=':
             if args[0] != args[2]:
