@@ -52,6 +52,7 @@ allCommands = [
 'exit',
 'clear',
 'else',
+'history'
 ]
 main_color = color()
 
@@ -94,10 +95,24 @@ class Shell(cmd.Cmd):
         historyFile.write("history "+str(args))
         historyFile.write('\n')
         historyFile.flush()
-        historyFile.seek(0)
-        for num, TEMP in enumerate(historyFile, start=1):
-            print('{}  {}'.format(num, TEMP.strip()))
-        print(historyFile.read())
+        RealCommands = ['history']
+        if ';' in args:
+            args=args.split(';')
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            historyFile.seek(0)
+            for num, TEMP in enumerate(historyFile, start=1):
+                print('{}  {}'.format(num, TEMP.strip()))
     def do_help(self,args):
         historyFile.write('help')
         historyFile.write('\n')
@@ -265,7 +280,6 @@ class Shell(cmd.Cmd):
                         eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                     else:
                         eval("self.default('"+' '.join(TEMP)+"')")
-
     def default(self,args):
         historyFile.write(args)
         historyFile.write('\n')
