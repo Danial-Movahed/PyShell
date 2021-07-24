@@ -362,18 +362,8 @@ class Shell(cmd.Cmd):
                         if str(TEMP.split(' ')[0]) in allCommands:
                             eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
                         else:
-<<<<<<< HEAD
                             eval("self.default('"+' '.join(TEMP)+"')")
 
-=======
-                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
-            elif 'else' in commandsToRun:
-                for TEMP in commandsToRun[commandsToRun.index('else')+1:]:
-                    if str(TEMP.split(' ')[0]) in allCommands:
-                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
-                    else:
-                        eval("self.default('"+' '.join(TEMP)+"')")
->>>>>>> semicolon
     def default(self,args):
         historyFile.write(args)
         historyFile.write('\n')
