@@ -263,15 +263,18 @@ class Shell(cmd.Cmd):
             args = ''
             for args in RealCommands:
                 args=args.split(' ')
-                if os.name == "nt" and args[0]=='clear':
-                    os.system('cls')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
                 else:
-                    try:
-                        rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
-                        print('Command returned '+str(rc))
-                    except:
-                         print(main_color.printRR('An error occured while running that command!'))
-                         print(main_color.printR('Double check your command for any typo'))
+                    if os.name == "nt" and args[0]=='clear':
+                        os.system('cls')
+                    else:
+                        try:
+                            rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
+                            print('Command returned '+str(rc))
+                        except:
+                             print(main_color.printRR('An error occured while running that command!'))
+                             print(main_color.printR('Double check your command for any typo'))
         else:
             args=args.split(' ')
             if os.name == "nt" and args[0]=='clear':
@@ -286,8 +289,8 @@ class Shell(cmd.Cmd):
 
 ################## Main Loop End ##############
 ################## Final ##############
-#try:
-Shell().cmdloop()
-#except Exception:
-historyFile.close()
+try:
+    Shell().cmdloop()
+except Exception:
+    historyFile.close()
 ################## Final ##############
