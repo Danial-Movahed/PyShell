@@ -102,7 +102,22 @@ class Shell(cmd.Cmd):
         historyFile.write('help')
         historyFile.write('\n')
         historyFile.flush()
-        print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
+        RealCommands = ['help']
+        if ';' in args:
+            args=args.split(';')
+            RealCommands+=list(map(str.strip, args))
+        if len(RealCommands)>1:
+            args = ''
+            for args in RealCommands:
+                if len(args) == 0:
+                    continue
+                args=args.split(' ')
+                if args[0] in allCommands:
+                    eval("self.do_"+str(args[0])+"('"+' '.join(args[1:])+"')")
+                else:
+                    eval("self.default('"+' '.join(args)+"')")
+        else:
+            print(main_color.printC("echo: for printing a text \nclear: for clear terminal \nexit: for exiting terminal \nhelp: for show the commands \n"))
     def do_if(self,args):
         historyFile.write('if '+str(args))
         historyFile.write('\n')
@@ -284,8 +299,8 @@ class Shell(cmd.Cmd):
                     rc = subprocess.call(args, stdout=sys.stdout, stderr=subprocess.STDOUT)
                     print('Command returned '+str(rc))
                 except:
-                     print(main_color.printRR('An error occured while running that command!'))
-                     print(main_color.printR('Double check your command for any typo'))
+                    print(main_color.printRR('An error occured while running that command!'))
+                    print(main_color.printR('Double check your command for any typo'))
 
 ################## Main Loop End ##############
 ################## Final ##############
