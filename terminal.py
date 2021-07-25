@@ -237,6 +237,33 @@ class Shell(cmd.Cmd):
         TEMP=[s for s in args if "$" in s]
         for s in TEMP:
             args[args.index(s)]=globals()[s[1:]]
+        if 'and' in args:
+            args=' '.join(args)
+            args=args.split('and')
+            for TEMP in range(len(args)):
+                if not eval(args[TEMP]):
+                    cond=False
+                    break
+                cond=True
+            if cond:
+                try:
+                    for TEMP in commandsToRun[:commandsToRun.index('else')]:
+                        if str(TEMP.split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                        else:
+                            eval("self.default('"+' '.join(TEMP)+"')")
+                except:
+                    for TEMP in range(len(commandsToRun[:commandsToRun.index('fi')])):
+                        if str(commandsToRun[TEMP].split(' ')[0]) in allCommands:
+                            eval("self.do_"+str(commandsToRun[TEMP].split(' ')[0])+"('"+' '.join(commandsToRun[TEMP].split(' ')[1:])+"')")
+                        else:
+                            eval("self.default('"+str(commandsToRun[TEMP])+"')")
+            else:
+                for TEMP in commandsToRun[commandsToRun.index('else')+1:commandsToRun.index('fi')]:
+                    if str(TEMP.split(' ')[0]) in allCommands:
+                        eval("self.do_"+str(TEMP.split(' ')[0])+"('"+' '.join(TEMP.split(' ')[1:])+"')")
+                    else:
+                        eval("self.default('"+' '.join(TEMP)+"')")
         if args[1] == '==':
             if args[0] == args[2]:
                 try:
