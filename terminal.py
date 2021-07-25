@@ -239,7 +239,8 @@ class Shell(cmd.Cmd):
             args[args.index(s)]=globals()[s[1:]]
         if 'and' in args:
             args=' '.join(args)
-            args=args.split('and')
+            args=args.split(';')
+            args=args[0].split('and')
             for TEMP in range(len(args)):
                 if not eval(args[TEMP]):
                     cond=False
