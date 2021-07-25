@@ -67,15 +67,16 @@ else:
 class Shell(cmd.Cmd):
     prompt=main_color.printGG(getpass.getuser()+"@"+socket.gethostname()+": ")+main_color.printBB(os.getcwd()+" $ ")
     def do_cd(self,args):
-        historyFile.write('cd '+str(args))
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands=list()
         if ';' in args:
             args=args.split(';')
             RealCommands=['cd '+args[0].strip()]
             args.remove(args[0])
             RealCommands+=list(map(str.strip, args))
+        else:
+            historyFile.write('cd '+str(args))
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>1:
             args = ''
             for args in RealCommands:
@@ -93,15 +94,16 @@ class Shell(cmd.Cmd):
             except:
                 print(main_color.printYY("An error occured while trying to change directory\nCheck if that directory exists!"))
     def do_echo(self, args):
-        historyFile.write('echo '+str(args))
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands=list()
         if ';' in args:
             args=args.split(';')
             RealCommands=['echo '+args[0].strip()]
             args.remove(args[0])
             RealCommands+=list(map(str.strip, args))
+        else:
+            historyFile.write('echo '+str(args))
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>1:
             args = ''
             for args in RealCommands:
@@ -123,15 +125,16 @@ class Shell(cmd.Cmd):
         historyFile.flush()
         raise Exception('Exit')
     def do_read(self,args):
-        historyFile.write("read "+str(args))
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands=list()
         if ';' in args:
             args=args.split(';')
             RealCommands=['read '+args[0].strip()]
             args.remove(args[0])
             RealCommands+=list(map(str.strip, args))
+        else:
+            historyFile.write("read "+str(args))
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>1:
             args = ''
             for args in RealCommands:
@@ -146,13 +149,14 @@ class Shell(cmd.Cmd):
             args=args.split(' ')[0]
             globals()[args]=input()
     def do_history(self,args):
-        historyFile.write("history "+str(args))
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands = ['history']
         if ';' in args:
             args=args.split(';')
             RealCommands+=list(map(str.strip, args))
+        else:
+            historyFile.write("history "+str(args))
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>1:
             args = ''
             for args in RealCommands:
@@ -168,13 +172,14 @@ class Shell(cmd.Cmd):
             for num, TEMP in enumerate(historyFile, start=1):
                 print('{}  {}'.format(num, TEMP.strip()))
     def do_help(self,args):
-        historyFile.write('help')
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands = ['help']
         if ';' in args:
             args=args.split(';')
             RealCommands+=list(map(str.strip, args))
+        else:
+            historyFile.write('help')
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>1:
             args = ''
             for args in RealCommands:
@@ -358,13 +363,14 @@ class Shell(cmd.Cmd):
                             eval("self.default('"+' '.join(TEMP)+"')")
 
     def default(self,args):
-        historyFile.write(args)
-        historyFile.write('\n')
-        historyFile.flush()
         RealCommands = list()
         if ';' in args:
             args=args.split(';')
             RealCommands=list(map(str.strip, args))
+        else:
+            historyFile.write(args)
+            historyFile.write('\n')
+            historyFile.flush()
         if len(RealCommands)>0:
             args = ''
             for args in RealCommands:
