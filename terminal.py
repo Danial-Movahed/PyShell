@@ -116,8 +116,6 @@ class Shell(cmd.Cmd):
                 args[2]=globals()[args[2][1:]]
             except:
                 args[2]=""
-
-
         if 'and' in args:
             args=' '.join(args)
             args=args.split('and')
